@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - BrokeNOmore</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="/" class="logo">Broke<span>NO</span>more</a>
+            <ul class="nav-links">
+                <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="/dashboard" class="active"><i class="fas fa-chart-pie"></i> Dashboard</a></li>
+                <li><a href="#transactions"><i class="fas fa-exchange-alt"></i> Transactions</a></li>
+                <li><a href="#reports"><i class="fas fa-chart-bar"></i> Reports</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <button id="logoutBtn" class="btn btn-secondary" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Sidebar Trigger -->
+    <div class="sidebar-trigger">
+        <i class="fas fa-bars"></i>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-user">
+                <div class="sidebar-user-avatar" id="userAvatar">U</div>
+                <div class="sidebar-user-info">
+                    <span class="sidebar-user-name" id="userName">User</span>
+                    <span class="sidebar-user-email" id="userEmail">user@example.com</span>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="/dashboard" class="sidebar-link active">
+                <i class="fas fa-chart-line"></i>
+                Dashboard
+            </a>
+            <a href="#transactions" class="sidebar-link">
+                <i class="fas fa-exchange-alt"></i>
+                Transactions
+            </a>
+            <a href="#" class="sidebar-link" onclick="showAddTransactionModal()">
+                <i class="fas fa-plus"></i>
+                Add Transaction
+            </a>
+            <a href="#budget" class="sidebar-link">
+                <i class="fas fa-wallet"></i>
+                Budget
+            </a>
+            <a href="#reports" class="sidebar-link">
+                <i class="fas fa-chart-bar"></i>
+                Reports
+            </a>
+            <a href="#settings" class="sidebar-link">
+                <i class="fas fa-cog"></i>
+                Settings
+            </a>
+        </nav>
+    </aside>
+
+    <main class="dashboard-main">
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <h1>Dashboard Overview</h1>
+                <div class="dashboard-actions">
+                    <button class="btn btn-primary" onclick="showAddTransactionModal()">
+                        <i class="fas fa-plus"></i> Add Transaction
+                    </button>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Summary Cards -->
+                <div class="summary-cards">
+                    <div class="summary-card income">
+                        <div class="card-icon">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Total Income</h3>
+                            <p class="amount" id="totalIncome">₹0.00</p>
+                            <span class="trend positive">+5.2% <i class="fas fa-arrow-up"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="summary-card expense">
+                        <div class="card-icon">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Total Expenses</h3>
+                            <p class="amount" id="totalExpenses">₹0.00</p>
+                            <span class="trend negative">-2.4% <i class="fas fa-arrow-down"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="summary-card balance">
+                        <div class="card-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Net Balance</h3>
+                            <p class="amount" id="netBalance">₹0.00</p>
+                            <span class="trend positive">+2.8% <i class="fas fa-arrow-up"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monthly Summary -->
+                <div class="monthly-summary">
+                    <h2>Monthly Summary</h2>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <h3>Income</h3>
+                            <p id="monthlyIncome">₹0.00</p>
+                            <div class="trend" id="incomeTrend">
+                                <span>0%</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                        </div>
+                        <div class="summary-item">
+                            <h3>Expenses</h3>
+                            <p id="monthlyExpenses">₹0.00</p>
+                            <div class="trend" id="expenseTrend">
+                                <span>0%</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                        </div>
+                        <div class="summary-item">
+                            <h3>Savings</h3>
+                            <p id="monthlySavings">₹0.00</p>
+                            <div class="trend" id="savingsTrend">
+                                <span>0%</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="dashboard-charts">
+                    <div class="chart-card">
+                        <h3>Income vs Expenses</h3>
+                        <canvas id="incomeExpenseChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Spending by Category</h3>
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="recent-transactions">
+                    <div class="section-header">
+                        <h2>Recent Transactions</h2>
+                        <div class="transaction-filters">
+                            <select id="transactionFilterType" class="filter-select">
+                                <option value="all">All</option>
+                                <option value="income">Income</option>
+                                <option value="expense">Expense</option>
+                            </select>
+                            <input type="text" id="transactionSearch" class="search-input" placeholder="Search transactions...">
+                        </div>
+                    </div>
+                    <div class="transactions-list" id="transactionsList">
+                        <!-- Transactions will be populated here by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Budget Progress -->
+                <div class="budget-progress">
+                    <h2>Budget Progress</h2>
+                    <div class="budget-categories">
+                        <div class="budget-category">
+                            <div class="category-header">
+                                <span>Food & Dining</span>
+                                <span>₹8,000 / ₹10,000</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 80%;"></div>
+                            </div>
+                        </div>
+                        <div class="budget-category">
+                            <div class="category-header">
+                                <span>Transportation</span>
+                                <span>₹3,000 / ₹5,000</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 60%;"></div>
+                            </div>
+                        </div>
+                        <div class="budget-category">
+                            <div class="category-header">
+                                <span>Entertainment</span>
+                                <span>₹2,000 / ₹4,000</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 50%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Transaction Modal -->
+    <div class="modal" id="addTransactionModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('addTransactionModal')">&times;</span>
+            <h2>Add New Transaction</h2>
+            <form id="transactionForm">
+                <div class="form-group">
+                    <label for="transactionType">Type</label>
+                    <select id="transactionType" required>
+                        <option value="">Select type</option>
+                        <option value="income">Income</option>
+                        <option value="expense">Expense</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="transactionAmount">Amount (₹)</label>
+                    <input type="number" id="transactionAmount" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="transactionCategory">Category</label>
+                    <select id="transactionCategory" required>
+                        <option value="">Select category</option>
+                        <optgroup label="Income">
+                            <option value="salary">Salary</option>
+                            <option value="freelance">Freelance</option>
+                            <option value="investments">Investments</option>
+                            <option value="other_income">Other</option>
+                        </optgroup>
+                        <optgroup label="Expenses">
+                            <option value="food">Food & Dining</option>
+                            <option value="transportation">Transportation</option>
+                            <option value="utilities">Utilities</option>
+                            <option value="entertainment">Entertainment</option>
+                            <option value="shopping">Shopping</option>
+                            <option value="health">Health</option>
+                            <option value="other_expense">Other</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="transactionDate">Date</label>
+                    <input type="date" id="transactionDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="transactionDescription">Description</label>
+                    <textarea id="transactionDescription" rows="2" placeholder="Enter transaction details..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Transaction</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html> 

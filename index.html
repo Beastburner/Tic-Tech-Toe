@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrokeNOmore - Budget Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary-color: #475569;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --background-color: #f1f5f9;
+            --dark-bg: #0f172a;
+            --card-background: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --blue-gradient: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+            --dark-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --font-mono: 'Roboto Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* Header Styles */
+        header {
+            background: var(--dark-gradient);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+            font-family: var(--font-mono);
+            display: flex;
+            align-items: center;
+        }
+
+        .logo::before {
+            content: "<";
+            color: var(--primary-light);
+            margin-right: 0.25rem;
+        }
+        
+        .logo::after {
+            content: "/>";
+            color: var(--primary-light);
+            margin-left: 0.25rem;
+        }
+
+        .logo span {
+            color: var(--primary-light);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 0.5rem 1.25rem;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 90vh;
+            padding-top: 8rem;
+            position: relative;
+            background-color: var(--dark-bg);
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .grid-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.9)), 
+                              url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%236366f1' fill-opacity='0.08'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 20.83l2.83-2.83 1.41 1.41L1.41 22.24H0v-1.41zM0 3.41l2.83 2.83 1.41-1.41L1.41 0H0v3.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM20.83 40l-2.83-2.83 1.41-1.41L22.24 38.59V40h-1.41zM3.41 40l-2.83-2.83L0 38.59V40h3.41zM40 38.59l-2.83 2.83-1.41-1.41L38.59 40H40v-1.41zM40 20.83l-2.83 2.83-1.41-1.41L38.59 22.24H40v-1.41zM40 3.41l-2.83-2.83-1.41 1.41L38.59 0H40v3.41zM1.41 0L0 1.41l2.83 2.83L4.24 2.83 1.41 0zM19.17 0l-2.83 1.41 2.83 2.83L21.41 4.24 19.17 0zM36.76 0L40 3.41 37.17 1.41 36.76 0zM0 1.41l2.83 2.83L0 3.41V1.41zM0 19.17l2.83 2.83L0 21.41V19.17zM0 36.76l2.83-2.83L0 36.76v-2.83z'%3E%3C/path%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-title span {
+            color: var(--primary-light);
+            font-family: var(--font-mono);
+        }
+        
+        .hero-subtitle {
+            font-size: 1.25rem;
+            max-width: 700px;
+            margin: 0 auto 2.5rem;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .hero-buttons .btn {
+            padding: 0.75rem 1.75rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+        }
+
+        .btn-cta {
+            background: var(--blue-gradient);
+            color: white;
+            font-size: 1.125rem;
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+        }
+
+        .blinking-cursor {
+            animation: blink 1s step-end infinite;
+            font-family: var(--font-mono);
+            font-weight: 400;
+            color: var(--primary-light);
+        }
+
+        @keyframes blink {
+            from, to {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 6rem 0;
+            background-color: #fff;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .section-title p {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .feature-card {
+            background-color: #fff;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary-light);
+        }
+
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--blue-gradient);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-size: 1.75rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(15, 23, 42, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background-color: var(--card-background);
+            padding: 2.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            width: 100%;
+            max-width: 420px;
+            position: relative;
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.2s;
+        }
+
+        .close-modal:hover {
+            color: var(--danger-color);
+        }
+
+        .modal-content h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            text-align: center;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            background-color: #f8fafc;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+            background-color: #fff;
+        }
+
+        .error-message {
+            color: var(--danger-color);
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            padding: 0.75rem;
+            border-radius: var(--radius-md);
+            background-color: rgba(239, 68, 68, 0.1);
+            display: none;
+        }
+
+        .error-message:not(:empty) {
+            display: block;
+        }
+
+        /* Switch Auth Link Styles */
+        .switch-auth {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .switch-auth a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+            margin-left: 0.25rem;
+        }
+
+        .switch-auth a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--dark-bg);
+            color: #fff;
+            padding: 3rem 0;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #fff;
+            font-family: var(--font-mono);
+        }
+
+        .footer-logo span {
+            color: var(--primary-light);
+        }
+
+        .footer-copyright {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 1.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                width: 100%;
+                max-width: 300px;
+                margin: 0 auto;
+            }
+            
+            .modal-content {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+        }
+
+        /* Code Line Animation */
+        .code-line {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 3rem;
+            text-align: center;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 3px solid var(--primary-light);
+            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+            max-width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--primary-light) }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="/" class="logo">Broke<span>NO</span>more</a>
+            <ul class="nav-links">
+                <li><a href="/" class="active"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="#dashboard"><i class="fas fa-chart-pie"></i> Dashboard</a></li>
+                <li><a href="#transactions"><i class="fas fa-exchange-alt"></i> Transactions</a></li>
+                <li><a href="#reports"><i class="fas fa-chart-bar"></i> Reports</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <button id="loginBtn" class="btn btn-secondary" onclick="showLoginModal()">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <button id="registerBtn" class="btn btn-primary" onclick="showRegisterModal()">
+                    <i class="fas fa-user-plus"></i> Register
+                </button>
+                <button id="logoutBtn" class="btn btn-secondary" onclick="logout()" style="display: none;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Sidebar Trigger -->
+    <div class="sidebar-trigger">
+        <i class="fas fa-bars"></i>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2 class="sidebar-title">Menu</h2>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="/dashboard" class="sidebar-link">
+                <i class="fas fa-chart-line"></i>
+                Dashboard
+            </a>
+            <a href="/transactions" class="sidebar-link">
+                <i class="fas fa-exchange-alt"></i>
+                Transactions
+            </a>
+            <a href="#" class="sidebar-link" onclick="showAddTransactionModal()">
+                <i class="fas fa-plus"></i>
+                Add Transaction
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-user-avatar" id="userAvatar"></div>
+                <div class="sidebar-user-info">
+                    <span class="sidebar-user-name" id="userName">Loading...</span>
+                    <span class="sidebar-user-email" id="userEmail">Loading...</span>
+                </div>
+            </div>
+            <button class="btn btn-secondary" onclick="logout()" style="width: 100%;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </aside>
+
+    <main>
+        <section class="hero-section">
+            <div class="grid-background"></div>
+            <div class="hero-content">
+                <h1 class="hero-title">Financial Control <span>++</span><span class="blinking-cursor">|</span></h1>
+                <p class="hero-subtitle">Track your expenses, manage your budget, and achieve your financial goals with BrokeNOmore. Your journey to financial freedom starts here.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-cta" onclick="showRegisterModal()">
+                        <i class="fas fa-rocket"></i> Get Started
+                    </button>
+                    <button class="btn btn-secondary" onclick="showLoginModal()">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </button>
+                </div>
+                <div class="code-line">console.log("Smart budget tracking activated");</div>
+            </div>
+        </section>
+
+        <section class="features-section">
+            <div class="section-title">
+                <h2>Power-Packed Features</h2>
+                <p>Everything you need to manage your finances in one place</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Expense Tracking</h3>
+                    <p>Monitor your spending habits with detailed categorization and real-time updates to stay on top of your finances.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <h3>Budget Planning</h3>
+                    <p>Create customized budgets that fit your lifestyle and financial goals with our intuitive budget planner.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Smart Analysis</h3>
+                    <p>Get AI-powered insights and recommendations to optimize your spending and increase your savings rate.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Budget Section -->
+        <section class="budget-section" id="budget">
+            <div class="container">
+                <h1>Budget Overview</h1>
+                <div class="budget-summary">
+                    <div class="summary-card">
+                        <h3>Income</h3>
+                        <p class="amount" id="budgetIncomeTotal">₹0.00</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Expenses</h3>
+                        <p class="amount" id="budgetExpenseTotal">₹0.00</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Remaining</h3>
+                        <p class="amount" id="budgetRemainingTotal">₹0.00</p>
+                    </div>
+                </div>
+                <div class="budget-details">
+                    <h2>Budget Details</h2>
+                    <div id="budgetDetailsList">
+                        <!-- Budget details will be populated here by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="transactions-section">
+                    <h2>Transaction Dashboard</h2>
+                    <div class="transaction-form">
+                        <h3>Add New Transaction</h3>
+                        <form id="transactionForm">
+                            <div class="form-group">
+                                <label for="transactionType">Type</label>
+                                <select id="transactionType" required>
+                                    <option value="">Select type</option>
+                                    <option value="income">Income</option>
+                                    <option value="expense">Expense</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="transactionAmount">Amount (₹)</label>
+                                <input type="number" id="transactionAmount" min="0" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="transactionCategory">Category</label>
+                                <input type="text" id="transactionCategory" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="transactionDate">Date</label>
+                                <input type="date" id="transactionDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="transactionDescription">Description</label>
+                                <textarea id="transactionDescription" rows="2"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Transaction</button>
+                        </form>
+                    </div>
+                    
+                    <div class="transaction-list">
+                        <h3>Recent Transactions</h3>
+                        <div class="transaction-filters">
+                            <select id="transactionFilterType">
+                                <option value="all">All Transactions</option>
+                                <option value="income">Income</option>
+                                <option value="expense">Expenses</option>
+                            </select>
+                            <input type="text" id="transactionSearch" placeholder="Search transactions...">
+                        </div>
+                        <div id="transactionsList">
+                            <!-- Transactions will be populated here by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="suggestions">
+                    <h2>Savings Suggestions</h2>
+                    <div id="savingsSuggestions">
+                        <!-- Suggestions will be populated here by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="charts">
+                    <h2>Income and Expense Distribution</h2>
+                    <div class="chart-container">
+                        <canvas id="incomeChart"></canvas>
+                        <canvas id="expenseChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section class="dashboard-section" id="dashboard">
+            <div class="dashboard-container">
+                <div class="dashboard-header">
+                    <h1>Dashboard Overview</h1>
+                    <div class="dashboard-actions">
+                        <button class="btn btn-primary" onclick="showAddTransactionModal()">
+                            <i class="fas fa-plus"></i> Add Transaction
+                        </button>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Summary Cards -->
+                    <div class="summary-cards">
+                        <div class="summary-card income">
+                            <div class="card-icon">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Total Income</h3>
+                                <p class="amount" id="totalIncome">₹0.00</p>
+                                <span class="trend positive">+5.2% <i class="fas fa-arrow-up"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="summary-card expense">
+                            <div class="card-icon">
+                                <i class="fas fa-arrow-down"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Total Expenses</h3>
+                                <p class="amount" id="totalExpenses">₹0.00</p>
+                                <span class="trend negative">-2.4% <i class="fas fa-arrow-down"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="summary-card balance">
+                            <div class="card-icon">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Net Balance</h3>
+                                <p class="amount" id="netBalance">₹0.00</p>
+                                <span class="trend positive">+2.8% <i class="fas fa-arrow-up"></i></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Monthly Summary -->
+                    <div class="monthly-summary">
+                        <h2>Monthly Summary</h2>
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <h3>Income</h3>
+                                <p id="monthlyIncome">₹0.00</p>
+                                <div class="trend" id="incomeTrend">
+                                    <span>0%</span>
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </div>
+                            <div class="summary-item">
+                                <h3>Expenses</h3>
+                                <p id="monthlyExpenses">₹0.00</p>
+                                <div class="trend" id="expenseTrend">
+                                    <span>0%</span>
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </div>
+                            <div class="summary-item">
+                                <h3>Savings</h3>
+                                <p id="monthlySavings">₹0.00</p>
+                                <div class="trend" id="savingsTrend">
+                                    <span>0%</span>
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="dashboard-charts">
+                        <div class="chart-card">
+                            <h3>Income vs Expenses</h3>
+                            <canvas id="incomeExpenseChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Spending by Category</h3>
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="recent-transactions">
+                        <div class="section-header">
+                            <h2>Recent Transactions</h2>
+                            <div class="transaction-filters">
+                                <select id="transactionFilterType" class="filter-select">
+                                    <option value="all">All</option>
+                                    <option value="income">Income</option>
+                                    <option value="expense">Expense</option>
+                                </select>
+                                <input type="text" id="transactionSearch" class="search-input" placeholder="Search transactions...">
+                            </div>
+                        </div>
+                        <div class="transactions-list" id="transactionsList">
+                            <!-- Transactions will be populated here by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Budget Progress -->
+                    <div class="budget-progress">
+                        <h2>Budget Progress</h2>
+                        <div class="budget-categories">
+                            <div class="budget-category">
+                                <div class="category-header">
+                                    <span>Food & Dining</span>
+                                    <span>₹8,000 / ₹10,000</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 80%;"></div>
+                                </div>
+                            </div>
+                            <div class="budget-category">
+                                <div class="category-header">
+                                    <span>Transportation</span>
+                                    <span>₹3,000 / ₹5,000</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 60%;"></div>
+                                </div>
+                            </div>
+                            <div class="budget-category">
+                                <div class="category-header">
+                                    <span>Entertainment</span>
+                                    <span>₹2,000 / ₹4,000</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 50%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">Broke<span>NO</span>more</div>
+            <div class="footer-copyright">&copy; 2025 BrokeNOmore. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('loginModal')">&times;</span>
+            <h2>Welcome Back</h2>
+            <div class="error-message" id="loginError"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginUsername">Username</label>
+                    <input type="text" id="loginUsername" required placeholder="Enter your username">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="Enter your password">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+            </form>
+            <div class="switch-auth">
+                Don't have an account?<a href="#" onclick="showRegisterModal()">Register</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('registerModal')">&times;</span>
+            <h2>Create Account</h2>
+            <div class="error-message" id="registerError"></div>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="registerUsername">Username</label>
+                    <input type="text" id="registerUsername" required placeholder="Choose a username">
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" required placeholder="Create a password">
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" required placeholder="Confirm your password">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Register</button>
+            </form>
+            <div class="switch-auth">
+                Already have an account?<a href="#" onclick="showLoginModal()">Login</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Transaction Modal -->
+    <div class="modal" id="addTransactionModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('addTransactionModal')">&times;</span>
+            <h2>Add New Transaction</h2>
+            <form id="transactionForm">
+                <div class="form-group">
+                    <label for="transactionType">Type</label>
+                    <select id="transactionType" required>
+                        <option value="">Select type</option>
+                        <option value="income">Income</option>
+                        <option value="expense">Expense</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="transactionAmount">Amount (₹)</label>
+                    <input type="number" id="transactionAmount" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="transactionCategory">Category</label>
+                    <select id="transactionCategory" required>
+                        <option value="">Select category</option>
+                        <optgroup label="Income">
+                            <option value="salary">Salary</option>
+                            <option value="freelance">Freelance</option>
+                            <option value="investments">Investments</option>
+                            <option value="other_income">Other</option>
+                        </optgroup>
+                        <optgroup label="Expenses">
+                            <option value="food">Food & Dining</option>
+                            <option value="transportation">Transportation</option>
+                            <option value="utilities">Utilities</option>
+                            <option value="entertainment">Entertainment</option>
+                            <option value="shopping">Shopping</option>
+                            <option value="health">Health</option>
+                            <option value="other_expense">Other</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="transactionDate">Date</label>
+                    <input type="date" id="transactionDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="transactionDescription">Description</label>
+                    <textarea id="transactionDescription" rows="2" placeholder="Enter transaction details..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Transaction</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>
